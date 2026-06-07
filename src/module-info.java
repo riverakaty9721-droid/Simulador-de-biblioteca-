@@ -1,2 +1,0 @@
-module simulador_biblioteca {
-}

@@ -1,46 +1,34 @@
 package simulador_biblioteca;
 
-public class Libro {
 
-    // ===== ATRIBUTOS =====
+public class Libro {
     private int id;
     private String titulo;
     private String autor;
     private boolean disponible;
 
-    // ===== CONSTRUCTOR =====
     public Libro(int id, String titulo, String autor) {
-        this.id = id;
-        this.titulo = titulo;
-        this.autor = autor;
-        this.disponible = true; // Por defecto, el libro está disponible
+        this.id       = id;
+        this.titulo   = titulo;
+        this.autor    = autor;
+        this.disponible = true;
     }
 
-    // ===== GETTERS Y SETTERS =====
-    public int getId() {
-        return id;
-    }
+    public int    getId()        { return id; }
+    public String getTitulo()    { return titulo; }
+    public String getAutor()     { return autor; }
+    public boolean isDisponible(){ return disponible; }
+    public void setDisponible(boolean d){ this.disponible = d; }
 
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public String getAutor() {
-        return autor;
-    }
-
-    public boolean isDisponible() {
-        return disponible;
-    }
-
-    public void setDisponible(boolean disponible) {
-        this.disponible = disponible;
-    }
-
-    // ===== MÉTODO toString =====
     @Override
     public String toString() {
-        String estado = disponible ? "DISPONIBLE" : "PRESTADO";
-        return "[ID: " + id + "] " + titulo + " - Autor: " + autor + " | Estado: " + estado;
+        String C = Colores.RESET;
+        String estado = disponible
+            ? Colores.VERDE + "✔ DISPONIBLE" + C
+            : Colores.ROJO  + "✘ PRESTADO"   + C;
+        return Colores.CIAN + "[ID: " + id + "]" + C
+             + " " + Colores.AMARILLO_BRILLANTE + titulo + C
+             + " - Autor: " + Colores.BLANCO + autor + C
+             + " | " + estado;
     }
 }
