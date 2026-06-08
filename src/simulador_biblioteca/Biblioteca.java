@@ -17,18 +17,63 @@ public class Biblioteca {
     }
 
     private void cargarDatosEjemplo() {
-        agregarLibro("Cien Años de Soledad",             "Gabriel García Márquez");
-        agregarLibro("El Principito",                    "Antoine de Saint-Exupéry");
-        agregarLibro("Don Quijote de la Mancha",         "Miguel de Cervantes");
-        agregarLibro("Harry Potter y la Piedra Filosofal","J.K. Rowling");
-        agregarLibro("1984",                             "George Orwell");
-        registrarUsuario("Ana López");
-        registrarUsuario("Carlos Pérez González");
+    	// --- 1. CARGAMOS LOS LIBROS ---
+        agregarLibro("Cien Años de Soledad", "Gabriel García Márquez", "Novela"); 
+        agregarLibro("El Principito", "Antoine de Saint-Exupéry", "Cuento");      
+        agregarLibro("Don Quijote de la Mancha", "Miguel de Cervantes", "Novela Clásica");
+        agregarLibro("Harry Potter y la Piedra Filosofal", "J.K. Rowling", "Fantasía"); 
+        agregarLibro("1984", "George Orwell", "Ciencia Ficción");                          
+        agregarLibro("El Señor de los Anillos", "J.R.R. Tolkien", "Fantasía");      
+        agregarLibro("Fahrenheit 451", "Ray Bradbury", "Ciencia Ficción");                 
+        agregarLibro("Un Mundo Feliz", "Aldous Huxley", "Ciencia Ficción");                
+        agregarLibro("Noches Blancas", "Fiódor Dostoyevski", "Novela");            
+        agregarLibro("Metamorfosis", "Franz Kafka", "Novela");                     
+        agregarLibro("El diario de Ana Frank", "Ana Frank", "Biografía");          
+        
+        // Libros de Referencia (Solo consulta, no se pueden prestar)
+        agregarLibro("Diccionario de la RAE", "Real Academia Española", "Referencia");
+        agregarLibro("Enciclopedia Médica", "Varios Autores", "Referencia");
+        
+        // --- 2. CARGAMOS LOS USUARIOS ---
+        // Docente (Tipo 2)
+        registrarUsuario("Kevin Rafailan", 2);      // ID 1 (Docente)
+
+        // Estudiantes (Tipo 1)
+        registrarUsuario("Edwin Abarca", 1);        // ID 2
+        registrarUsuario("Alessandro Aguilar", 1);  // ID 3
+        registrarUsuario("Leandro Aguilar", 1);     // ID 4
+        registrarUsuario("Telma Alvarado", 1);      // ID 5
+        registrarUsuario("Carlos Ayala", 1);        // ID 6
+        registrarUsuario("Jorge Bachez", 1);        // ID 7
+        registrarUsuario("Miguel Cruz", 1);         // ID 8
+        registrarUsuario("Keiry Figueroa", 1);      // ID 9
+        registrarUsuario("Mirian Franco", 1);       // ID 10
+        registrarUsuario("Steven Guerrero", 1);     // ID 11
+        registrarUsuario("Sara Guzman", 1);         // ID 12
+        registrarUsuario("Sayda Hernandez", 1);     // ID 13
+        registrarUsuario("Christian Hernandez", 1); // ID 14
+        registrarUsuario("Gabriela Larin", 1);      // ID 15
+        registrarUsuario("Sthefany Linares", 1);    // ID 16
+        registrarUsuario("Mario Lue", 1);           // ID 17
+        registrarUsuario("Samuel Trujillo", 1);     // ID 18
+        registrarUsuario("Ashley Umaña", 1);        // ID 19
+        registrarUsuario("Karla Zaldaña", 1);       // ID 20
+        registrarUsuario("Osman Zelada", 1);        // ID 21
+        registrarUsuario("Kenneth Zelaya", 1);      // ID 22
+
+        // --- 3. SIMULAMOS PRÉSTAMOS ACTIVOS ---
+        realizarPrestamoSilencioso(1, 1);   // El profesor Kevin pide "Cien Años de Soledad"
+        realizarPrestamoSilencioso(2, 3);   // Alessandro Aguilar pide "El Principito"
+        realizarPrestamoSilencioso(4, 3);   // Alessandro Aguilar también pide "Harry Potter"
+        realizarPrestamoSilencioso(3, 8);   // Miguel Cruz pide "Don Quijote"
+        realizarPrestamoSilencioso(5, 14);  // Christian Hernandez pide "1984"
+        realizarPrestamoSilencioso(6, 19);  // Ashley Umaña pide "El Señor de los Anillos"
+        realizarPrestamoSilencioso(7, 22);  // Kenneth Zelaya pide "Fahrenheit 451"
     }
 
     // ─── LIBROS ────────────────────────────────────────────────────────────────
 
-    public boolean agregarLibro(String titulo, String autor) {
+    public boolean agregarLibro(String titulo, String autor, String categoria) { // <-- Agrega la categoría aquí
         String C = Colores.RESET;
         if (totalLibros >= MAX_LIBROS) {
             System.out.println(Colores.ROJO_BRILLANTE + "\n  ✘ ¡Catálogo lleno! No se pueden agregar más libros." + C);
@@ -40,7 +85,7 @@ public class Biblioteca {
                 return false;
             }
         }
-        libros[totalLibros++] = new Libro(contadorIdLibros++, titulo, autor);
+        libros[totalLibros++] = new Libro(contadorIdLibros++, titulo, autor, categoria); // <-- Pásale la categoría al final
         return true;
     }
 
@@ -95,19 +140,23 @@ public class Biblioteca {
 
     // ─── USUARIOS ──────────────────────────────────────────────────────────────
 
-    public boolean registrarUsuario(String nombre) {
-        String C = Colores.RESET;
+    public boolean registrarUsuario(String nombre, int tipoUsuario) { 
         if (totalUsuarios >= MAX_USUARIOS) {
-            System.out.println(Colores.ROJO_BRILLANTE + "\n  ✘ ¡Límite de usuarios alcanzado!" + C);
+            System.out.println(Colores.ROJO_BRILLANTE + "\n  ✖ ¡Límite de usuarios alcanzado!" + Colores.RESET);
             return false;
         }
-        for (int i = 0; i < totalUsuarios; i++) {
-            if (usuarios[i].getNombre().equalsIgnoreCase(nombre)) {
-                System.out.println(Colores.AMARILLO + "\n  ⚠  Ya existe un usuario con ese nombre." + C);
-                return false;
-            }
+        
+        int nuevoId = contadorIdUsuarios; // Usamos el ID actual (empieza en 1)
+        
+        // Evaluamos qué tipo de usuario crear y lo guardamos en la posición 'totalUsuarios'
+        if (tipoUsuario == 1) {
+            usuarios[totalUsuarios] = new Estudiante(nuevoId, nombre);
+        } else {
+            usuarios[totalUsuarios] = new Docente(nuevoId, nombre);
         }
-        usuarios[totalUsuarios++] = new Usuario(contadorIdUsuarios++, nombre);
+        
+        totalUsuarios++;      // ¡ESTO FALTABA! Aumentamos el total de usuarios
+        contadorIdUsuarios++; // Preparamos el ID para el siguiente
         return true;
     }
 
@@ -152,31 +201,54 @@ public class Biblioteca {
         if (!hay) System.out.println(Colores.VERDE + "  ✔  Todos los libros están disponibles. ¡Genial!" + C);
     }
 
-    public void realizarPrestamo1(int idLibro, int idUsuario) {
+ // --- 1. MÉTODO SILENCIOSO (Hace la lógica pero no imprime el ticket) ---
+    private void realizarPrestamoSilencioso(int idLibro, int idUsuario) {
         String C = Colores.RESET;
-        Libro lib   = buscarLibroPorId(idLibro);
+        Libro lib = buscarLibroPorId(idLibro);
         Usuario usr = buscarUsuarioPorId(idUsuario);
+        
         if (lib == null) {
-            System.out.println(Colores.ROJO_BRILLANTE + "\n  ✘ No existe ningún libro con ese ID." + C); return;
+            System.out.println(Colores.ROJO_BRILLANTE + "\n  ✖ No existe ningún libro con ese ID." + C); return;
         }
         if (usr == null) {
-            System.out.println(Colores.ROJO_BRILLANTE + "\n  ✘ No existe ningún usuario con ese ID." + C); return;
+            System.out.println(Colores.ROJO_BRILLANTE + "\n  ✖ No existe ningún usuario con ese ID." + C); return;
         }
+        
+        // REGLA DE NEGOCIO: Los libros de Referencia no se prestan
+        if (lib.getCategoria() != null && lib.getCategoria().equalsIgnoreCase("Referencia")) {
+            System.out.println(Colores.ROJO_BRILLANTE + "\n  ✖ Error: '" + lib.getTitulo() + "' es material de referencia y solo puede consultarse dentro de las instalaciones." + C);
+            return;
+        }
+        
         if (!lib.isDisponible()) {
-            System.out.println(Colores.ROJO + "\n  ✘ El libro \"" + lib.getTitulo() + "\" ya está prestado." + C); return;
+            System.out.println(Colores.ROJO + "\n  ✖ El libro \"" + lib.getTitulo() + "\" ya está prestado." + C); return;
         }
+        
+        // Intentamos agregar el préstamo al usuario (aquí se valida el límite de 3 o 5 libros)
         if (!usr.agregarPrestamo(lib.getTitulo())) {
-            System.out.println(Colores.ROJO + "\n  ✘ " + usr.getNombre() + " ya tiene el máximo de préstamos (3)." + C); return;
+            System.out.println(Colores.ROJO + "\n  ✖ " + usr.getNombre() + " ya tiene el máximo de préstamos permitido." + C); return;
         }
+        
+        // Si pasa todas las validaciones, cambiamos el estado del libro
         lib.setDisponible(false);
-        Colores.linea("★", 58, Colores.VERDE_BRILLANTE);
-        System.out.println(Colores.VERDE_BRILLANTE
-                + "  ✔  ¡Préstamo realizado exitosamente!" + C);
-        System.out.println(Colores.CIAN + "  📖 Libro   : " + Colores.AMARILLO_BRILLANTE + lib.getTitulo() + C);
-        System.out.println(Colores.CIAN + "  👤 Usuario : " + Colores.BLANCO_BRILLANTE   + usr.getNombre() + C);
-        Colores.linea("★", 58, Colores.VERDE_BRILLANTE);
     }
 
+    // --- 2. MÉTODO PÚBLICO (Este es el que usará el menú y sí imprime el ticket) ---
+    public void realizarPrestamoSilencioso1(int idLibro, int idUsuario) {
+        // Ejecutamos toda la lógica de arriba en silencio
+        realizarPrestamoSilencioso(idLibro, idUsuario);
+        
+        // Buscamos el libro para confirmar si el préstamo realmente se hizo
+        Libro lib = buscarLibroPorId(idLibro);
+        Usuario usr = buscarUsuarioPorId(idUsuario);
+        
+        // Si el libro ya no está disponible, significa que el préstamo fue un éxito
+        if (lib != null && usr != null && !lib.isDisponible()) {
+            System.out.println(Colores.VERDE_BRILLANTE + "\n  ✔ ¡Préstamo registrado exitosamente! 🎉" + Colores.RESET);
+            // Llamamos a tu método que dibuja el ticket completo
+            imprimirTicket(lib, usr); 
+        }
+    }
     public void realizarDevolucion(int idLibro, int idUsuario) {
         String C = Colores.RESET;
         Libro lib   = buscarLibroPorId(idLibro);

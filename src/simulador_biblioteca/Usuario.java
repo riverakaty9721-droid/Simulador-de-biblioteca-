@@ -1,25 +1,26 @@
 package simulador_biblioteca;
 
-public class Usuario {
-    private int id;
-    private String nombre;
-    private String[] librosPrestados;
-    private int cantidadPrestados;
-    private static final int MAX_PRESTAMOS = 3;
+public abstract class Usuario {
+	protected int id;
+	protected String nombre;
+	protected String[] librosPrestados;
+	protected int cantidadPrestados;
+	protected int maxPrestamos; // <-- Nueva variable
 
-    public Usuario(int id, String nombre) {
-        this.id               = id;
-        this.nombre           = nombre;
-        this.librosPrestados  = new String[MAX_PRESTAMOS];
-        this.cantidadPrestados = 0;
-    }
+	public Usuario(int id, String nombre, int maxPrestamos) { // <-- Agregas parámetro
+	    this.id = id;
+	    this.nombre = nombre;
+	    this.maxPrestamos = maxPrestamos; // <-- Lo guardas
+	    this.librosPrestados = new String[this.maxPrestamos]; // <-- El arreglo usa el nuevo límite
+	    this.cantidadPrestados = 0;
+	}
 
     public int    getId()               { return id; }
     public String getNombre()           { return nombre; }
     public int    getCantidadPrestados(){ return cantidadPrestados; }
 
     public boolean agregarPrestamo(String tituloLibro) {
-        if (cantidadPrestados >= MAX_PRESTAMOS) return false;
+    	if (cantidadPrestados >= maxPrestamos) return false;
         librosPrestados[cantidadPrestados++] = tituloLibro;
         return true;
     }
@@ -51,10 +52,10 @@ public class Usuario {
     public String toString() {
         String C = Colores.RESET;
         String bar = Colores.AMARILLO + "█".repeat(cantidadPrestados)
-                   + Colores.BLANCO  + "░".repeat(MAX_PRESTAMOS - cantidadPrestados) + C;
+                   + Colores.BLANCO  + "░".repeat(maxPrestamos - cantidadPrestados) + C;
         return Colores.AZUL_BRILLANTE + "[ID: " + id + "]" + C
              + " " + Colores.BLANCO_BRILLANTE + nombre + C
-             + " | Prestados: " + Colores.AMARILLO + cantidadPrestados + "/" + MAX_PRESTAMOS + C
+             + " | Prestados: " + Colores.AMARILLO + cantidadPrestados + "/" + maxPrestamos + C
              + " " + bar;
     }
 }

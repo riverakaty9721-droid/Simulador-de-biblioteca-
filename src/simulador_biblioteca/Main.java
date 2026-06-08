@@ -1,3 +1,4 @@
+
 package simulador_biblioteca;
 
 import java.util.Scanner;
@@ -152,18 +153,25 @@ public class Main {
 
             op = leerEnteroValidado(Colores.AMARILLO_BRILLANTE + "  ➤  Opción: " + C);
             switch (op) {
-                case 1 -> {
-                    System.out.print(Colores.CIAN + "  📝 Título del libro : " + Colores.RESET);
-                    String titulo = scanner.nextLine().trim();
-                    System.out.print(Colores.CIAN + "  📝 Autor del libro  : " + Colores.RESET);
-                    String autor = scanner.nextLine().trim();
-                    if (titulo.isEmpty() || autor.isEmpty()) {
-                        System.out.println(Colores.ROJO + "\n  ✘ El título y el autor no pueden estar vacíos." + Colores.RESET);
-                    } else if (biblioteca.agregarLibro(titulo, autor)) {
-                        System.out.println(Colores.VERDE_BRILLANTE
-                                + "\n  ✔  ¡Libro \"" + titulo + "\" agregado exitosamente! 🎉" + Colores.RESET);
-                    }
+            case 1 -> {
+                System.out.print(Colores.CIAN + "  📖 Título del libro : " + Colores.RESET);
+                String titulo = scanner.nextLine().trim();
+                
+                System.out.print(Colores.CIAN + "  ✍ Autor del libro  : " + Colores.RESET);
+                String autor = scanner.nextLine().trim();
+                
+                // NUEVO: Pedimos la categoría
+                System.out.print(Colores.CIAN + "  🏷 Categoría (Ej: Novela, Referencia) : " + Colores.RESET);
+                String categoria = scanner.nextLine().trim();
+                
+                // Validamos que ninguno de los tres esté vacío
+                if (titulo.isEmpty() || autor.isEmpty() || categoria.isEmpty()) {
+                    System.out.println(Colores.ROJO + "\n  ✖ El título, autor y categoría no pueden estar vacíos." + Colores.RESET);
+                } else if (biblioteca.agregarLibro(titulo, autor, categoria)) { // Pasamos los 3 datos aquí
+                    System.out.println(Colores.VERDE_BRILLANTE 
+                        + "\n  ✔ ¡Libro \"" + titulo + "\" agregado exitosamente! 🎉" + Colores.RESET);
                 }
+            }
                 case 2 -> { System.out.println(); biblioteca.mostrarTodosLosLibros(); }
                 case 3 -> {
                     System.out.print(Colores.CIAN + "  🔎 Título a buscar: " + Colores.RESET);
@@ -204,14 +212,24 @@ public class Main {
             op = leerEnteroValidado(Colores.AMARILLO_BRILLANTE + "  ➤  Opción: " + C);
             switch (op) {
                 case 1 -> {
-                    System.out.print(Colores.CIAN + "  📝 Nombre del usuario: " + Colores.RESET);
-                    String nombre = scanner.nextLine().trim();
-                    if (nombre.isEmpty()) {
-                        System.out.println(Colores.ROJO + "\n  ✘ El nombre no puede estar vacío." + Colores.RESET);
-                    } else if (biblioteca.registrarUsuario(nombre)) {
-                        System.out.println(Colores.VERDE_BRILLANTE
-                                + "\n  ✔  ¡Usuario \"" + nombre + "\" registrado exitosamente! 🎉" + Colores.RESET);
-                    }
+                	System.out.print(Colores.CIAN + "  📖 Nombre del usuario: " + Colores.RESET);
+                	String nombre = scanner.nextLine().trim();
+
+                	if (nombre.isEmpty()) {
+                	    System.out.println(Colores.ROJO + "\n  ✖ El nombre no puede estar vacío." + Colores.RESET);
+                	    return;
+                	}
+
+                	// NUEVO: Preguntamos el tipo
+                	System.out.println(Colores.AMARILLO_BRILLANTE + "  1. Estudiante (Max 3 libros)");
+                	System.out.println("  2. Docente (Max 5 libros)" + Colores.RESET);
+                	System.out.print(Colores.CIAN + "  ▶ Tipo de usuario: " + Colores.RESET);
+                	int tipo = Integer.parseInt(scanner.nextLine());
+
+                	// Pasamos la variable 'tipo' al método
+                	if (biblioteca.registrarUsuario(nombre, tipo)) {
+                	    System.out.println(Colores.VERDE_BRILLANTE + "\n  ✔ ¡Usuario registrado exitosamente!" + Colores.RESET);
+                	}
                 }
                 case 2 -> { System.out.println(); biblioteca.mostrarUsuarios(); }
                 case 0  -> {}
